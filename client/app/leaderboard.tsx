@@ -11,7 +11,7 @@ const LeaderboardPage = () => {
       try {
         setIsLoading(true);
         const response = await fetch(
-          "http://194.87.193.190:8080/user/leaderboard",
+          "https://194.87.193.190.nip.io/user/leaderboard",
           {
             method: "GET",
             headers: {
@@ -42,6 +42,10 @@ const LeaderboardPage = () => {
       <h1 className="text-3xl font-bold mb-6 text-center flex items-center justify-center text-black">
         <Trophy className="mr-2" /> LEADERBOARD
       </h1>
+      <h2 className="text-3xl font-bold mb-6 text-center flex items-center justify-center text-black">
+        {" "}
+        Кто первый заработает миллиард?
+      </h2>
 
       {isLoading && (
         <div className="text-center py-4 text-lg text-gray-600">

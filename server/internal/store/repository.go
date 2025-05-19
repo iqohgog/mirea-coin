@@ -74,8 +74,10 @@ func (repo *StoreRepository) GetAutoStore(telegramID int) (*[]Item, error) {
 		if err := rows.Scan(&i.ID, &i.Name, &i.Description, &i.Quality, &i.BaseValue, &i.Coefficient, &i.Quantity); err != nil {
 			return nil, err
 		}
+
 		i.Cost = i.BaseValue + i.BaseValue*int(math.Pow(float64(i.Coefficient), float64(i.Quantity)))
 		items = append(items, i)
+		fmt.Print(items)
 	}
 	if err := rows.Err(); err != nil {
 		return nil, err
