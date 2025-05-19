@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { X } from "lucide-react";
 
 // Компонент модального окна
-function Modal({ item, onClose, onBuy }) {
+function Modal({ item, onClose, onBuy, activeTab }) {
   if (!item) return null;
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -21,7 +21,13 @@ function Modal({ item, onClose, onBuy }) {
         />
         <h2 className="text-2xl text-black font-bold mb-2">{item.Name}</h2>
         <p className="text-black mb-4">{item.Description}</p>
-        <p className="font-medium mb-4 text-black">Цена: {item.Cost} токенов</p>
+        <p className="font-medium mb-2 text-black">Цена: {item.Cost} токенов</p>
+        {activeTab === "clicks" ? (
+          <p className="text-black mb-2">Цена клика: {item.Quality}</p>
+        ) : (
+          <p className="text-black mb-2">Авто в секунду: {item.Quality}</p>
+        )}
+        <p className="text-black mb-4">Куплено: {item.Quantity}</p>
         <button
           onClick={() => onBuy(item)}
           className="w-full py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition"
@@ -89,11 +95,11 @@ export default function StorePage() {
           "click-boost-5.jpg",
         ];
         const updatedData = data.map((item, index) => {
-          if (activeTab === "auto") {
-            return { ...item, Image: autoImages[index % autoImages.length] };
-          } else {
-            return { ...item, Image: clickImages[index % clickImages.length] };
-          }
+          const image =
+            activeTab === "auto"
+              ? autoImages[index % autoImages.length]
+              : clickImages[index % clickImages.length];
+          return { ...item, Image: image };
         });
         setItems(updatedData);
       } catch (e) {
@@ -191,7 +197,21 @@ export default function StorePage() {
               <h3 className="font-medium text-black text-lg mb-1 text-center">
                 {item.Name}
               </h3>
-              <span className="text-sm text-black">{item.Cost} токенов</span>
+              <span className="text-sm text-black mb-1">
+                {item.Cost} токенов
+              </span>
+              {activeTab === "clicks" ? (
+                <span className="text-sm text-black">
+                  Цена клика: {item.Quality}
+                </span>
+              ) : (
+                <span className="text-sm text-black">
+                  Авто в секунду: {item.Quality}
+                </span>
+              )}
+              <span className="text-sm text-black mt-1">
+                Куплено: {item.Quantity}
+              </span>
             </div>
           ))}
       </div>
@@ -201,6 +221,7 @@ export default function StorePage() {
         item={modalItem}
         onClose={() => setModalItem(null)}
         onBuy={handleBuy}
+        activeTab={activeTab}
       />
     </div>
   );

@@ -9,16 +9,13 @@ export default function EarnPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Get Telegram user data
   const telegramID = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
   const firstName = window.Telegram?.WebApp?.initDataUnsafe?.user?.first_name;
   const lastName = window.Telegram?.WebApp?.initDataUnsafe?.user?.last_name;
   const fullName = `${firstName ?? ""} ${lastName ?? ""}`.trim();
 
-  // Base URL for API requests
   const baseURL = "https://194.87.193.190.nip.io";
 
-  // Function to fetch user data
   const fetchUserData = async () => {
     try {
       const response = await fetch(`${baseURL}/user`, {
@@ -47,8 +44,6 @@ export default function EarnPage() {
     }
   };
 
-  // Function to fetch click cost
-  // Function to fetch click cost
   const fetchClickCost = async () => {
     try {
       const response = await fetch(`${baseURL}/user/cost`, {
@@ -67,12 +62,9 @@ export default function EarnPage() {
 
       const data = await response.json();
 
-      // Handle case where the JSON response is just a number
       if (typeof data === "number") {
         setClickCost(data);
-      }
-      // Handle case where the JSON response is an object with cost property
-      else if (data && data.cost) {
+      } else if (data && data.cost) {
         setClickCost(data.cost);
       }
     } catch (err) {
@@ -80,7 +72,6 @@ export default function EarnPage() {
     }
   };
 
-  // Function to fetch auto-click rate
   const fetchAutoClickRate = async () => {
     try {
       const response = await fetch(`${baseURL}/user/auto`, {
@@ -98,15 +89,16 @@ export default function EarnPage() {
       }
 
       const data = await response.json();
-      if (data && data.per_second !== undefined) {
-        setTokensPerSecond(data.per_second);
+      if (typeof data === "number") {
+        setTokensPerSecond(data);
+      } else if (data && data.cost) {
+        setTokensPerSecond(data.cost);
       }
     } catch (err) {
       console.error("Error fetching auto click rate:", err);
     }
   };
 
-  // Function to handle button click
   const handleClick = async () => {
     try {
       const response = await fetch(`${baseURL}/user/click`, {
@@ -124,7 +116,6 @@ export default function EarnPage() {
         throw new Error("Failed to process click");
       }
 
-      // Update user data after clicking
       fetchUserData();
       fetchClickCost();
     } catch (err) {
@@ -132,14 +123,12 @@ export default function EarnPage() {
     }
   };
 
-  // Prevent vertical scrolling (swipe up/down)
   useEffect(() => {
     const preventScroll = (e) => {
       e.preventDefault();
     };
 
     const preventDefaultTouchMove = (e) => {
-      // Prevent default for vertical movement
       if (
         Math.abs(e.touches[0].clientY - startY) >
         Math.abs(e.touches[0].clientX - startX)
@@ -156,7 +145,6 @@ export default function EarnPage() {
       startY = e.touches[0].clientY;
     };
 
-    // Add event listeners to prevent scrolling
     document.body.style.overflow = "hidden";
     document.body.style.position = "fixed";
     document.body.style.width = "100%";
@@ -171,7 +159,6 @@ export default function EarnPage() {
     });
 
     return () => {
-      // Clean up event listeners on component unmount
       document.body.style.overflow = "";
       document.body.style.position = "";
       document.body.style.width = "";
@@ -183,7 +170,6 @@ export default function EarnPage() {
     };
   }, []);
 
-  // Initialize data on component mount
   useEffect(() => {
     if (telegramID) {
       const initializeData = async () => {
@@ -196,7 +182,6 @@ export default function EarnPage() {
 
       initializeData();
 
-      // Set up intervals for updating data
       const userDataInterval = setInterval(fetchUserData, 3000);
       const autoClickInterval = setInterval(fetchAutoClickRate, 5000);
 
@@ -210,7 +195,6 @@ export default function EarnPage() {
     }
   }, [telegramID]);
 
-  // Calculate progress percentage
   const progressPercentage = maxTokens > 0 ? (balance / maxTokens) * 100 : 0;
 
   if (isLoading) {
@@ -238,7 +222,6 @@ export default function EarnPage() {
         <h1 className="text-3xl font-bold text-center mb-2 text-black">
           EARN TOKENS
         </h1>
-        {/* Stats */}
         <div className="grid grid-cols-2 gap-4 mb-8">
           <div className="bg-white p-4 rounded-lg shadow-md">
             <div className="text-gray-500 text-sm ">Current Balance</div>
@@ -254,7 +237,6 @@ export default function EarnPage() {
           </div>
         </div>
       </div>
-      {/* Click button */}
       <div className="flex flex-col items-center flex-grow justify-center">
         <button
           onClick={handleClick}
