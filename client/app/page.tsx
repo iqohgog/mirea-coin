@@ -10,7 +10,6 @@ export default function BottomNavigationMenu() {
   const [activeTab, setActiveTab] = useState("earn");
   const [telegramReady, setTelegramReady] = useState(false);
 
-  // Wait for Telegram WebApp to be initialized
   useEffect(() => {
     const checkTelegramWebApp = () => {
       if (window.Telegram?.WebApp?.initDataUnsafe) {
@@ -20,17 +19,14 @@ export default function BottomNavigationMenu() {
       return false;
     };
 
-    // Check if already available
     if (checkTelegramWebApp()) return;
 
-    // If not available, set up an interval to check
     const intervalId = setInterval(() => {
       if (checkTelegramWebApp()) {
         clearInterval(intervalId);
       }
     }, 100);
 
-    // Clean up interval on component unmount
     return () => clearInterval(intervalId);
   }, []);
 
